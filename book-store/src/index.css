@@ -65,8 +65,14 @@ img{
   box-shadow: 7px 7px 5px black;
 }
 
-img:hover{
+img:hover {
   transform: scale(1.05);
+  cursor: pointer;
+}
+
+.removeIcon:hover{
+  transform: scale(1.2);
+  cursor: pointer;
 }
 
 .checkoutItem{
@@ -74,21 +80,33 @@ img:hover{
   margin: 1.5em;
 }
 
-.checkoutItem > img{
+.checkoutItem  div{
   width: 10%;
   margin: auto 1em;
+  position: relative;
 }
 
-.checkoutItem > span{
+.checkoutItem  span{
   margin: auto 1em;
   font-size: 1.5em;
 }
 
-.checkoutItem > input{
+.checkoutItem  input{
   width: 5%;
   margin: auto 1em;
   font-size: 1.5em;
 }
+
+.removeIcon{
+  top:5px;
+  right:5px;
+  transition: all 0.7s;
+  position: absolute;
+  width: 20%;
+  height: 20%;
+}
+
+
 
 
 

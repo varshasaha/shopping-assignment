@@ -57,7 +57,12 @@ function CheckoutItem(props){
     let imgSrc = "/images/" + props.item.name + ".jpg";
     return (
         <div className="checkoutItem" >
-            <img src={imgSrc} alt="Unable to load"/><span>X</span><input type="text"  defaultValue={props.item.quantity} onChange={(e) => {props.changeQuantity(props.item,e.target.value)}}/>
+        <div>
+                <img src={imgSrc} alt="Unable to load"/>
+                <img src="/images/remove.png" alt="Unable to load" className="removeIcon" onClick={() => props.removeProduct(props.item)}/>
+        </div>
+            <span>X</span>
+            <input type="text"  defaultValue={props.item.quantity} onChange={(e) => {props.changeQuantity(props.item,e.target.value)}}/>
         </div>
     );
 }
@@ -68,7 +73,7 @@ function CheckoutItem(props){
 class Checkout extends React.Component{
     render(){
         const items = this.props.items.map((item) => {
-           return <CheckoutItem key={item.id} item={item} changeQuantity={(book,value) => this.props.changeQuantity(book,value)}/>
+           return <CheckoutItem key={item.id} item={item} changeQuantity={(book,value) => this.props.changeQuantity(book,value)} removeProduct={(book) => this.props.removeProduct(book)}/>
         });
         return (
             <div>
@@ -112,7 +117,7 @@ class Home extends React.Component{
                     <Route exact path='/' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
                     <Route path='/products' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
                     <Route path='/description/:id' component={Description}/>
-                    <Route path='/checkout' render={() => (<Checkout items={cart} changeQuantity={(book,value) => this.props.changeQuantity(book,value)}/>)}/>
+                    <Route path='/checkout' render={() => (<Checkout items={cart} changeQuantity={(book,value) => this.props.changeQuantity(book,value)} removeProduct={(book) => this.props.removeProduct(book)}/>)}/>
                 </Switch>
             </div>
         );
@@ -207,13 +212,22 @@ class App extends React.Component {
         });
     }
 
+    removeProduct(book){
+        var cart = this.state.cart;
+        var index=cart.findIndex((item) => (item.id === book.id));
+        cart.splice(index,1);
+        this.setState({
+            cart: cart
+        });
+    }
+
     render(){
         const cart = this.state.cart;
         const books = this.state.books;
         return (
             <div>
                     <Header items={cart}/>
-                    <Home addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)}/>
+                    <Home addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)} removeProduct={(book) => this.removeProduct(book)}/>
             </div>
         );
     }
