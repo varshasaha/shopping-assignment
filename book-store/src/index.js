@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
-import {BrowserRouter,Switch,Route,Router} from 'react-router-dom';
+import {BrowserRouter,Switch,Route,Link} from 'react-router-dom';
+import {createBrowserHistory} from 'history';
 
 /**
  *return html for each book to be displaed on home page
@@ -15,10 +16,10 @@ function Book(props){
         let imgSrc = "/images/" + props.value.name + ".jpg";
         let descUrl = "/description/" + props.value.id;
         return (
-            <a key={props.value.id} href={descUrl} className="imageClick">
-                <img src={imgSrc}/>
-                <img className="addToCart" src="/images/cart.png" onClick={(e) => {e.preventDefault();e.stopPropagation();props.addToCart()}}/>
-            </a>
+            <Link key={props.value.id} to={descUrl} className="imageClick">
+                <img src={imgSrc} className="product" alt="Unable to load"/>
+                <img className="addToCart" alt="Unable to load" src="/images/cart.png" onClick={(e) => {e.preventDefault();e.stopPropagation();props.addToCart()}}/>
+            </Link>
         );
 }
 
@@ -28,7 +29,7 @@ function Book(props){
 class DisplayBooks extends React.Component{
     render(){
         const images = this.props.books.map((book) => {
-            return <Book value={book} addToCart={() => {this.props.addToCart(book)}}/>;
+            return <Book key={book.id} value={book} addToCart={() => {this.props.addToCart(book)}}/>;
         });
         return (
             <div>
@@ -52,15 +53,26 @@ class Description extends React.Component{
 
 }
 
+function CheckoutItem(props){
+    let imgSrc = "/images/" + props.item.name + ".jpg";
+    return (
+        <div className="checkoutItem" >
+            <img src={imgSrc} alt="Unable to load"/><span>X</span><input type="text"  defaultValue={props.item.quantity} onChange={(e) => {props.changeQuantity(props.item,e.target.value)}}/>
+        </div>
+    );
+}
+
 /**
  * when user checks out
  */
 class Checkout extends React.Component{
     render(){
-        console.log("items:",this.props);
+        const items = this.props.items.map((item) => {
+           return <CheckoutItem key={item.id} item={item} changeQuantity={(book,value) => this.props.changeQuantity(book,value)}/>
+        });
         return (
             <div>
-                {this.props.items}
+                {items}
             </div>
         );
     }
@@ -75,11 +87,14 @@ class Checkout extends React.Component{
  * @constructor
  */
 function Header(props){
-    console.log("header");
+    var numberOfItems = 0;
+    if(props.items.length>0) {
+        numberOfItems = props.items.reduce((total, item) => ({quantity : total.quantity + item.quantity}));
+    }
     return (
         <header className="mainHeader">
             <span>Book Store</span>
-            <a href="/checkout"><img src="/images/cart.png"  className="cart"/><span className="cartItems">{props.items.length}</span></a>
+            <Link to="/checkout"><img src="/images/cart.png"  alt="Unable to load" className="cart"/><span className="cartItems">{numberOfItems.quantity}</span></Link>
         </header>
     );
 }
@@ -88,22 +103,17 @@ function Header(props){
  * Home page
  */
 class Home extends React.Component{
-
     render(){
         const books = this.props.books;
         const cart = this.props.cart;
-        console.log("cart:",cart);
         return (
             <div>
-          <Header items={cart}/>
-                <BrowserRouter>
                 <Switch>
-                    <Route exact path='/' render={() => (<DisplayBooks books={this.props.books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
-                    <Route exact path='/home' render={() => (<DisplayBooks books={this.props.books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
-                    <Route exact path='/description/:id' component={Description}/>
-                    <Route exact path='/checkout' render={() => (<Checkout items={this.props.cart}/>)}/>
+                    <Route exact path='/' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route path='/products' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route path='/description/:id' component={Description}/>
+                    <Route path='/checkout' render={() => (<Checkout items={cart} changeQuantity={(book,value) => this.props.changeQuantity(book,value)}/>)}/>
                 </Switch>
-                </BrowserRouter>
             </div>
         );
     }
@@ -174,19 +184,61 @@ class App extends React.Component {
 
     addToCart(book){
         var cart = this.state.cart;
+        var bookWithQuantity = Object.assign({},book);
+        bookWithQuantity.quantity = 1;
+        if(!updateQuantity(cart,bookWithQuantity)){
+            this.setState({
+                cart: cart.concat([bookWithQuantity])
+            });
+        }
+        else{
+            this.setState({
+                cart: cart
+            });
+        }
+    }
+
+    changeQuantity(book,value) {
+        var cart = this.state.cart;
+        value = Number(value);
+        updateQuantity(cart, book, value);
         this.setState({
-            cart: cart.concat([book])
+            cart: cart
         });
     }
 
     render(){
+        const cart = this.state.cart;
+        const books = this.state.books;
         return (
-            <Home addToCart={(book) => this.addToCart(book)} books={this.state.books} cart={this.state.cart}/>
+            <div>
+                    <Header items={cart}/>
+                    <Home addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)}/>
+            </div>
         );
     }
 }
 
+function updateQuantity(arr,item,value){
+    var length = arr.length;
+    for(let i=0;i<length;i++){
+        if(arr[i].id === item.id){
+            if(value !== undefined) {
+                arr[i].quantity = value;
+            }
+            else{
+                arr[i].quantity += item.quantity;
+            }
+            return 1;
+        }
+    }
+    return 0;
+}
+
 ReactDOM.render((
+    <BrowserRouter history={createBrowserHistory()}>
         <App />
-),
+    </BrowserRouter>
+
+    ),
     document.getElementById('root'));
