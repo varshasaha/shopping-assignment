@@ -3,6 +3,13 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import {BrowserRouter,Switch,Route,Router} from 'react-router-dom';
 
+/**
+ *return html for each book to be displaed on home page
+ *
+ * @param props
+ * @returns {XML}
+ * @constructor
+ */
 
 function Book(props){
         let imgSrc = "/images/" + props.value.name + ".jpg";
@@ -15,6 +22,9 @@ function Book(props){
         );
 }
 
+/**
+ * Control displaying of books
+ */
 class DisplayBooks extends React.Component{
     render(){
         const images = this.props.books.map((book) => {
@@ -26,9 +36,11 @@ class DisplayBooks extends React.Component{
             </div>
         );
     }
-
 }
 
+/**
+ * Description page of each book
+ */
 class Description extends React.Component{
     render(){
         return (
@@ -40,28 +52,67 @@ class Description extends React.Component{
 
 }
 
+/**
+ * when user checks out
+ */
 class Checkout extends React.Component{
     render(){
+        console.log("items:",this.props);
         return (
             <div>
-                {this.props}
+                {this.props.items}
             </div>
         );
     }
 
 }
 
+/**
+ * Header of page
+ *
+ * @param props
+ * @returns {XML}
+ * @constructor
+ */
 function Header(props){
-    const checkoutUrl = "/checkout/"+props.items;
+    console.log("header");
     return (
         <header className="mainHeader">
             <span>Book Store</span>
-            <a href={checkoutUrl}><img src="/images/cart.png"  className="cart"/><span>{props.items.length}</span></a>
+            <a href="/checkout"><img src="/images/cart.png"  className="cart"/><span className="cartItems">{props.items.length}</span></a>
         </header>
     );
 }
 
-class App extends React.Component{
+/**
+ * Home page
+ */
+class Home extends React.Component{
+
+    render(){
+        const books = this.props.books;
+        const cart = this.props.cart;
+        console.log("cart:",cart);
+        return (
+            <div>
+          <Header items={cart}/>
+                <BrowserRouter>
+                <Switch>
+                    <Route exact path='/' render={() => (<DisplayBooks books={this.props.books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route exact path='/home' render={() => (<DisplayBooks books={this.props.books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route exact path='/description/:id' component={Description}/>
+                    <Route exact path='/checkout' render={() => (<Checkout items={this.props.cart}/>)}/>
+                </Switch>
+                </BrowserRouter>
+            </div>
+        );
+    }
+}
+
+/**
+ * Main Component
+ */
+class App extends React.Component {
     constructor(){
         super();
         this.state = {
@@ -119,30 +170,18 @@ class App extends React.Component{
                 }
             ]
         }
-    }
+    };
 
     addToCart(book){
         var cart = this.state.cart;
         this.setState({
-                cart: cart.concat([book])
+            cart: cart.concat([book])
         });
     }
 
     render(){
-        const books = this.state.books;
-        const cart = this.state.cart;
         return (
-            <div>
-          <Header items={cart}/>
-                <BrowserRouter>
-                <Switch>
-                    <Route exact path='/' render={() => (<DisplayBooks books={this.state.books} addToCart={(book) => this.addToCart(book)}/>)}/>
-                    <Route path='/home' render={() => (<DisplayBooks books={this.state.books} addToCart={(book) => this.addToCart(book)}/>)}/>
-                    <Route path='/description/:id' component={Description}/>
-                    <Route path='/checkout/:items' render={() => (<Checkout />)}/>
-                </Switch>
-                </BrowserRouter>
-            </div>
+            <Home addToCart={(book) => this.addToCart(book)} books={this.state.books} cart={this.state.cart}/>
         );
     }
 }
