@@ -29,7 +29,7 @@ body {
   margin-right: 1.3em;
 }
 
-.cartItems{
+.mainHeader > a > span{
   position: absolute;
   right: 1em;
   bottom: 1em;
@@ -46,14 +46,19 @@ img{
 .imageClick{
   display: inline-block;
   border: 1px solid black;
-  height: 400px;
-  margin: 0.5em 0.67%;
-  width: 30%;
+  height: 300px;
+  margin: 0.71%;
+  width: 21.6%;
   padding: 10px;
   position: relative;
 }
 
-.addToCart{
+.imageClick img:first-child{
+  box-shadow: 7px 7px 5px black;
+
+}
+
+.imageClick img:last-child{
   position: absolute;
   bottom: 5%;
   right: 5%;
@@ -61,9 +66,6 @@ img{
   width: 40px;
 }
 
-.product{
-  box-shadow: 7px 7px 5px black;
-}
 
 img:hover {
   transform: scale(1.05);
@@ -127,6 +129,15 @@ img:hover {
 .descProduct > div:nth-child(even) > h1{
   margin-top: 0;
 }
+
+.descProduct > div:nth-child(even) > p{
+  font-size: 1.3em;
+}
+
+.descProduct .imageClick{
+  height: 500px;
+}
+
 
 
 

@@ -17,8 +17,8 @@ function Product(props){
         let descUrl = "/description/" + props.value.id;
         return (
             <Link to={descUrl} className="imageClick">
-                <img src={imgSrc} className="product" alt="Unable to load"/>
-                <img className="addToCart" alt="Unable to load" src="/images/cart.png" onClick={(e) => {e.preventDefault();e.stopPropagation();props.addToCart()}}/>
+                <img src={imgSrc} alt="Unable to load"/>
+                <img alt="Unable to load" src="/images/cart.png" onClick={(e) => {e.preventDefault();e.stopPropagation();props.addToCart()}}/>
             </Link>
         );
 }
@@ -106,7 +106,7 @@ function Header(props){
     return (
         <header className="mainHeader">
             <span>Book Store</span>
-            <Link to="/checkout"><img src="/images/cart.png"  alt="Unable to load" className="cart"/><span className="cartItems">{numberOfItems.quantity}</span></Link>
+            <Link to="/checkout"><img src="/images/cart.png"  alt="Unable to load" className="cart"/><span>{numberOfItems.quantity}</span></Link>
         </header>
     );
 }
