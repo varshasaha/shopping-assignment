@@ -138,6 +138,21 @@ img:hover {
   height: 500px;
 }
 
+.searchBox{
+  position: relative;
+  margin: 0.5em;
+  pading:2em;
+  height: 30px;
+}
+
+.searchBox > input{
+  position: absolute;
+  right:0;
+  bottom:0;
+  margin-right:1em;
+  height: 20px;
+}
+
 
 
 

@@ -28,12 +28,28 @@ function Product(props){
  */
 class DisplayProducts extends React.Component{
     render(){
+        var timeoutId;
         const images = this.props.books.map((book) => {
             return <Product key={book.id} value={book} addToCart={() => {this.props.addToCart(book)}}/>;
         });
+
         return (
             <div>
-                {images}
+                <div className="searchBox">
+                    <input type="text" placeholder="Enter name to search" onChange = {(e) => {
+                                                                var value = e.target.value;
+                                                                setTimeout(() => {
+                                                                if(timeoutId){
+                                                                    clearTimeout(timeoutId)
+                                                                }
+                                                                timeoutId = this.props.onSearch(value);
+                                                                },2000)
+                                                            }
+                                                   }/>
+                </div>
+                <div>
+                    {images}
+                </div>
             </div>
         );
     }
@@ -121,8 +137,8 @@ class Main extends React.Component{
         return (
             <div>
                 <Switch>
-                    <Route exact path='/' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
-                    <Route path='/products' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route exact path='/' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)} onSearch={(searchStr) => this.props.onSearch(searchStr)}/>)}/>
+                    <Route path='/products' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)} onSearch={(searchStr) => this.props.onSearch(searchStr)}/>)}/>
                     <Route path='/description/:id' render={({match}) => (<Description getProduct={(id) => this.props.getProduct(id)} addToCart={(book) => this.props.addToCart(book)} match={match}/>)}/>
                     <Route path='/checkout' render={() => (<Checkout items={cart} changeQuantity={(book,value) => this.props.changeQuantity(book,value)} removeProduct={(book) => this.props.removeProduct(book)}/>)}/>
                 </Switch>
@@ -137,6 +153,58 @@ class Main extends React.Component{
 class App extends React.Component {
     constructor(){
         super();
+        this.books = [
+            {
+                id: '1',
+                name: 'book1',
+                description: 'description'
+            },
+            {
+                id: '2',
+                name: 'book2',
+                description: 'description'
+            },
+            {
+                id: '3',
+                name: 'book3',
+                description: 'description'
+            },
+            {
+                id: '4',
+                name: 'book4',
+                description: 'description'
+            },
+            {
+                id: '5',
+                name: 'book5',
+                description: 'description'
+            },
+            {
+                id: '6',
+                name: 'book6',
+                description: 'description'
+            },
+            {
+                id: '7',
+                name: 'book7',
+                description: 'description'
+            },
+            {
+                id: '8',
+                name: 'book8',
+                description: 'description'
+            },
+            {
+                id: '9',
+                name: 'book9',
+                description: 'description'
+            },
+            {
+                id: '10',
+                name: 'book10',
+                description: 'description'
+            }
+        ];
         this.state = {
             cart: [],
             books: [
@@ -233,13 +301,21 @@ class App extends React.Component {
         return books.find((item) => (item.id === id));
     }
 
+    onSearch(searchStr){
+        var books = this.books;
+        books = books.filter((item) => (item.name.includes(searchStr)));
+        this.setState({
+            books: books
+        });
+    };
+
     render(){
         const cart = this.state.cart;
         const books = this.state.books;
         return (
             <div>
                     <Header items={cart}/>
-                    <Main addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)} removeProduct={(book) => this.removeProduct(book)} getProduct={(id) => this.getProduct(id)}/>
+                    <Main addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)} removeProduct={(book) => this.removeProduct(book)} getProduct={(id) => this.getProduct(id)} onSearch={(searchStr) => this.onSearch(searchStr)}/>
             </div>
         );
     }
