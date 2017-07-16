@@ -36,7 +36,7 @@ class DisplayProducts extends React.Component{
         return (
             <div>
                 <div className="searchBox">
-                    <input type="text" placeholder="Enter name to search" onChange = {(e) => {
+                    <input type="text" placeholder="Enter product name to search" onChange = {(e) => {
                                                                 var value = e.target.value;
                                                                 setTimeout(() => {
                                                                 if(timeoutId){
@@ -153,117 +153,88 @@ class Main extends React.Component{
 class App extends React.Component {
     constructor(){
         super();
+        this.threshold = 10;
         this.books = [
             {
                 id: '1',
                 name: 'book1',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '2',
                 name: 'book2',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '3',
                 name: 'book3',
-                description: 'description'
+                description: 'description',
+                quantity: 10
             },
             {
                 id: '4',
                 name: 'book4',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '5',
                 name: 'book5',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '6',
                 name: 'book6',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '7',
                 name: 'book7',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '8',
                 name: 'book8',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '9',
                 name: 'book9',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             },
             {
                 id: '10',
                 name: 'book10',
-                description: 'description'
+                description: 'description',
+                quantity: 5
             }
         ];
         this.state = {
             cart: [],
-            books: [
-                {
-                    id: '1',
-                    name: 'book1',
-                    description: 'description'
-                },
-                {
-                    id: '2',
-                    name: 'book2',
-                    description: 'description'
-                },
-                {
-                    id: '3',
-                    name: 'book3',
-                    description: 'description'
-                },
-                {
-                    id: '4',
-                    name: 'book4',
-                    description: 'description'
-                },
-                {
-                    id: '5',
-                    name: 'book5',
-                    description: 'description'
-                },
-                {
-                    id: '6',
-                    name: 'book6',
-                    description: 'description'
-                },
-                {
-                    id: '7',
-                    name: 'book7',
-                    description: 'description'
-                },
-                {
-                    id: '8',
-                    name: 'book8',
-                    description: 'description'
-                },
-                {
-                    id: '9',
-                    name: 'book9',
-                    description: 'description'
-                },
-                {
-                    id: '10',
-                    name: 'book10',
-                    description: 'description'
-                }
-            ]
+            books: this.books
         }
     };
 
     addToCart(book){
         var cart = this.state.cart;
+        var books = this.state.books;
+        if(this.limitReached(cart,this.threshold)){
+            return;
+        }
+        if(this.productInStock(book,books)){
+            var itemOfIndex = this.state.books.findIndex(item => item.id === book.id);
+            books[itemOfIndex].quantity-=1;
+        }
+        else{
+            return;
+        }
         var bookWithQuantity = Object.assign({},book);
         bookWithQuantity.quantity = 1;
         if(!updateQuantity(cart,bookWithQuantity)){
@@ -273,9 +244,29 @@ class App extends React.Component {
         }
         else{
             this.setState({
-                cart: cart
+                cart: cart,
+                books: books
             });
         }
+    }
+
+    productInStock(product,stock){
+        var item = stock.find((item) => (item.id === product.id));
+        if(item.quantity == 0){
+            return 0;
+        }
+        return 1;
+    }
+
+    limitReached(arr,limit){
+        if(arr.length>0) {
+            var count = arr.reduce((total, item) => ({quantity: total.quantity + item.quantity}));
+            if (count.quantity < limit) {
+                return 0;
+            }
+            return 1;
+        }
+        return 0;
     }
 
     changeQuantity(book,value) {

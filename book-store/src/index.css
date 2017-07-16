@@ -110,6 +110,7 @@ img:hover {
 
 .descProduct > div{
   display: inline-block;
+  pointer-events: none;
 }
 
 .descProduct > div:nth-child(odd){
@@ -151,6 +152,7 @@ img:hover {
   bottom:0;
   margin-right:1em;
   height: 20px;
+  width: 20%;
 }
 
 
