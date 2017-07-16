@@ -12,11 +12,11 @@ import {createBrowserHistory} from 'history';
  * @constructor
  */
 
-function Book(props){
+function Product(props){
         let imgSrc = "/images/" + props.value.name + ".jpg";
         let descUrl = "/description/" + props.value.id;
         return (
-            <Link key={props.value.id} to={descUrl} className="imageClick">
+            <Link to={descUrl} className="imageClick">
                 <img src={imgSrc} className="product" alt="Unable to load"/>
                 <img className="addToCart" alt="Unable to load" src="/images/cart.png" onClick={(e) => {e.preventDefault();e.stopPropagation();props.addToCart()}}/>
             </Link>
@@ -26,10 +26,10 @@ function Book(props){
 /**
  * Control displaying of books
  */
-class DisplayBooks extends React.Component{
+class DisplayProducts extends React.Component{
     render(){
         const images = this.props.books.map((book) => {
-            return <Book key={book.id} value={book} addToCart={() => {this.props.addToCart(book)}}/>;
+            return <Product key={book.id} value={book} addToCart={() => {this.props.addToCart(book)}}/>;
         });
         return (
             <div>
@@ -44,9 +44,16 @@ class DisplayBooks extends React.Component{
  */
 class Description extends React.Component{
     render(){
+        var book = this.props.getProduct(this.props.match.params.id);
         return (
-            <div>
-                {this.props.match.params.id}
+            <div className="descProduct">
+                <div>
+                    <Product value={book} addToCart={() => {this.props.addToCart(book)}}/>
+                </div>
+                <div>
+                    <h1>Description</h1>
+                    <p>In 1903 Mary Boulton flees alone across the West, one heart-pounding step ahead of the law. At nineteen, she has just become a widow-and her husband's killer. As bloodhounds track her frantic race toward the mountains, she is tormented by mad visions and by the knowledge that her two ruthless brothers-in-law are in pursuit, determined to avenge their younger brother's death. Responding to little more than the primitive instinct for survival at any cost, she retreats ever deeper into the wilderness-and into the wilds of her own mind..</p>
+                </div>
             </div>
         );
     }
@@ -107,16 +114,16 @@ function Header(props){
 /**
  * Home page
  */
-class Home extends React.Component{
+class Main extends React.Component{
     render(){
         const books = this.props.books;
         const cart = this.props.cart;
         return (
             <div>
                 <Switch>
-                    <Route exact path='/' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
-                    <Route path='/products' render={() => (<DisplayBooks books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
-                    <Route path='/description/:id' component={Description}/>
+                    <Route exact path='/' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route path='/products' render={() => (<DisplayProducts books={books} addToCart={(book) => this.props.addToCart(book)}/>)}/>
+                    <Route path='/description/:id' render={({match}) => (<Description getProduct={(id) => this.props.getProduct(id)} addToCart={(book) => this.props.addToCart(book)} match={match}/>)}/>
                     <Route path='/checkout' render={() => (<Checkout items={cart} changeQuantity={(book,value) => this.props.changeQuantity(book,value)} removeProduct={(book) => this.props.removeProduct(book)}/>)}/>
                 </Switch>
             </div>
@@ -221,13 +228,18 @@ class App extends React.Component {
         });
     }
 
+    getProduct(id){
+        var books = this.state.books;
+        return books.find((item) => (item.id === id));
+    }
+
     render(){
         const cart = this.state.cart;
         const books = this.state.books;
         return (
             <div>
                     <Header items={cart}/>
-                    <Home addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)} removeProduct={(book) => this.removeProduct(book)}/>
+                    <Main addToCart={(book) => this.addToCart(book)} books={books} cart={cart} changeQuantity={(book,value) => this.changeQuantity(book,value)} removeProduct={(book) => this.removeProduct(book)} getProduct={(id) => this.getProduct(id)}/>
             </div>
         );
     }
@@ -250,7 +262,7 @@ function updateQuantity(arr,item,value){
 }
 
 ReactDOM.render((
-    <BrowserRouter history={createBrowserHistory()}>
+    <BrowserRouter histoy={createBrowserHistory()}>
         <App />
     </BrowserRouter>
 

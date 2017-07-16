@@ -106,6 +106,28 @@ img:hover {
   height: 20%;
 }
 
+.descProduct > div{
+  display: inline-block;
+}
+
+.descProduct > div:nth-child(odd){
+  width: 40%;
+}
+
+.descProduct > div:nth-child(odd) > a{
+  width: 80%;
+}
+
+.descProduct > div:nth-child(even){
+  width: 55%;
+  vertical-align: top;
+  padding: 0 1.5em 1.5em;
+}
+
+.descProduct > div:nth-child(even) > h1{
+  margin-top: 0;
+}
+
 
 
 
