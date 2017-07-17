@@ -252,7 +252,7 @@ class App extends React.Component {
 
     productInStock(product,stock){
         var item = stock.find((item) => (item.id === product.id));
-        if(item.quantity == 0){
+        if(item.quantity === 0){
             return 0;
         }
         return 1;
