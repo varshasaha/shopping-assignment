@@ -248,7 +248,6 @@ class App extends React.Component {
                 books: books
             });
         }
-        console.log("CART UPDATED");
     }
 
     productInStock(product,stock){
@@ -295,7 +294,6 @@ class App extends React.Component {
 
     onSearch(searchStr){
         var books = this.books;
-        console.log("Searching");
         books = books.filter((item) => (item.name.includes(searchStr)));
         this.setState({
             books: books
@@ -303,10 +301,8 @@ class App extends React.Component {
     };
 
     render(){
-        console.log("RENDERING AGAIN");
         const cart = this.state.cart;
         const books = this.state.books;
-        console.log(this.state.cart);
         return (
             <div>
                     <Header items={cart}/>
