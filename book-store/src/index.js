@@ -38,12 +38,12 @@ class DisplayProducts extends React.Component{
                 <div className="searchBox">
                     <input type="text" placeholder="Enter product name to search" onChange = {(e) => {
                                                                 var value = e.target.value;
-                                                                setTimeout(() => {
                                                                 if(timeoutId){
                                                                     clearTimeout(timeoutId)
                                                                 }
-                                                                timeoutId = this.props.onSearch(value);
-                                                                },2000)
+                                                                timeoutId = setTimeout(() => {
+                                                                this.props.onSearch(value);
+                                                                },2000);
                                                             }
                                                    }/>
                 </div>
@@ -295,6 +295,7 @@ class App extends React.Component {
 
     onSearch(searchStr){
         var books = this.books;
+        console.log("Searching");
         books = books.filter((item) => (item.name.includes(searchStr)));
         this.setState({
             books: books
