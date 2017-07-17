@@ -219,7 +219,7 @@ class App extends React.Component {
         this.state = {
             cart: [],
             books: this.books
-        }
+        };
     };
 
     addToCart(book){
@@ -248,6 +248,7 @@ class App extends React.Component {
                 books: books
             });
         }
+        console.log("CART UPDATED");
     }
 
     productInStock(product,stock){
@@ -301,8 +302,10 @@ class App extends React.Component {
     };
 
     render(){
+        console.log("RENDERING AGAIN");
         const cart = this.state.cart;
         const books = this.state.books;
+        console.log(this.state.cart);
         return (
             <div>
                     <Header items={cart}/>
