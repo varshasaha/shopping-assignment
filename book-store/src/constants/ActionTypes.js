@@ -1,0 +1,4 @@
+export const ADD_PRODUCT = 'ADD_PRODUCT';
+export const REMOVE_PRODUCT = 'REMOVE_PRODUCT';
+export const CHANGE_QUANTITY = 'CHANGE_QUANTIY';
+export const SEARCH_PRODUCT = 'SEARCH_PRODUCT';
