@@ -30,26 +30,15 @@ export default function cart(state=initialCart,action){
                     else{
                         updated_items = updated_items.concat([productNewQuantity]);
                     }
-                    state = {
-                        items: updated_items,
-                        threshold: 10
-                    }
+                    return Object.assign({},state,{items: updated_items});
                 }
             return state;
         case ActionTypes.REMOVE_PRODUCT:
             updated_items.splice(updated_items.findIndex((item) => (item.id === action.product.id)),1);
-            state ={
-                items: updated_items,
-                threshold: 10
-            };
-            return state;
+            return Object.assign({},state,{items: updated_items});
         case ActionTypes.CHANGE_QUANTITY:
             updated_items[updated_items.findIndex((item) => (item.id === action.product.id))].quantity = Number(action.quantity);
-            state ={
-                items: updated_items,
-                threshold: 10
-            };
-            return state;
+            return Object.assign({},state,{items: updated_items});
         default:
             return state;
 

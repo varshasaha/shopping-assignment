@@ -71,11 +71,7 @@ var products = {
 export default function productList(state = products, action){
     switch (action.type){
         case ActionTypes.SEARCH_PRODUCT:
-            state = {
-                books:  stock.filter((item) => (item.name.includes(action.value))),
-                searchStr: action.value
-            }
-            return state;
+            return Object.assign({},state,{items: stock.filter((item) => (item.name.includes(action.value))),searchStr: action.value});
         default :
             return state;
     }
